@@ -2,7 +2,7 @@
 
 import rospy #importar ros para python
 from std_msgs.msg import String, Int32 # importar mensajes de ROS tipo String y tipo Int32
-from geometry_msgs.msg import Twist # importar mensajes de ROS tipo geometry / Twist
+from geometry_msgs.msg import Point # importar mensajes de ROS tipo geometry / Twist
 from sensor_msgs.msg import Image # importar mensajes de ROS tipo Image
 import cv2 # importar libreria opencv
 from cv_bridge import CvBridge # importar convertidor de formato de imagenes
@@ -13,9 +13,9 @@ class Template(object):
 	def __init__(self, args):
 		super(Template, self).__init__()
 		self.args = args
-		self.sub = rospy.Subscriber("/duckiebot/camera_node/image/rect", Image, self.procesar_img)
-		self.pub = rospy.Publisher("/duckiebot/camera_node/image/yellow", Image, queue_size = 10)
-	
+		self.sub = rospy.Subscriber("/duckiebot/camera_node/image/raw", Image, self.procesar_img)
+		self.pubImg = rospy.Publisher("/duckiebot/detecciones", Image, queue_size = 10)
+		self.pubPos = rospy.Publisher("/duckiebot/posicionPato", Point, queue_size=10)
 	def publicar(self):
 		pass
 
@@ -35,21 +35,26 @@ class Template(object):
 		kernel = np.ones((5,5), np.uint8)
 		mask = cv2.erode(mask, kernel, iterations=1)
 		mask = cv2.dilate(mask, kernel, iterations=4)
-		# Aplicar mascara
-		image_out = cv2.bitwise_and(image_out, image_out, mask=mask)
 		# Definir blobs
 		_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 		# Dibujar rectangulos de cada blob
 		for cont in contours:
 			w,h,x,y = cv2.boundingRect(cont)	
 			cv2.rectangle(image_out, (x+w,y+h), (w,h), (255,255,255), 2)
+			pato_real = np.linalg.norm(np.array([36,32,29]))
+			pato_img = np.linalg.norm(np.array([h,w,np.sqrt(h*w)]))
+			focal = 101.85916
+			ratio = pato_real/pato_img
+			dist = ratio*focal
+			pos = Point(dist, -ratio*(x + w/2), -ratio*(y + h/2))
+			self.pubPos.publish(pos)
 		# Publicar imagen final
 		image_out = cv2.cvtColor(image_out, cv2.COLOR_HSV2BGR)
 		msg = bridge.cv2_to_imgmsg(image_out, "bgr8")
-		self.pub.publish(msg)
+		self.pubImg.publish(msg)
 
 def main():
-	rospy.init_node('clase4') #creacion y registro del nodo!
+	rospy.init_node('clase5') #creacion y registro del nodo!
 
 	obj = Template('args') # Crea un objeto del tipo Template, cuya definicion se encuentra arriba
 
