@@ -38,6 +38,7 @@ class Template(object):
 		# Definir blobs
 		_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 		# Dibujar rectangulos de cada blob
+                self.distQueue = 0 # para mandar el más cercano
 		for cont in contours:
 			w,h,x,y = cv2.boundingRect(cont) # width, height, x-pos, y-pos	
 			cv2.rectangle(image_out, (x+w,y+h), (w,h), (255,255,255), 2)
@@ -47,11 +48,14 @@ class Template(object):
 			pato_img = np.linalg.norm(np.array([h,w,np.sqrt(h*w)]))
 			focal = 101.85916
                         # saca un "factor de conversión" entre pixeles y milimetros
-			ratio = pato_real/pato_img
+                        if pato_img == 0:
+                            break
+                        ratio = pato_real/pato_img
 			dist = ratio*focal
+                        self.distQueue = min(dist, self.distQueue)
                         # convencion de robotica: +x adelante, +y derecha, +z arriba
                         pos = Point(dist, -ratio*(x + w/2), -ratio*(y + h/2))
-			self.pubPos.publish(pos) 
+	        self.pubPos.publish(Point(self.distQueue, 0, 0)
                 # Publicar imagen final
 		image_out = cv2.cvtColor(image_out, cv2.COLOR_HSV2BGR)
 		msg = bridge.cv2_to_imgmsg(image_out, "bgr8")

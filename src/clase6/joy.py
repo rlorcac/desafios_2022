@@ -14,7 +14,7 @@ class Template(object):
 		self.subFreno = rospy.Subscriber("duckiebot/c6/freno", Bool, self.frenar)
 		self.pub = rospy.Publisher("/duckiebot/wheels_driver_node/car_cmd", Twist2DStamped, queue_size=10)
 		self.freno = False
-		self.vel = 0
+                self.vel = 0
                 self.turn = 0
 
 	def publicar(self, B, controls):
