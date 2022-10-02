@@ -48,7 +48,7 @@ class Template(object):
 		
 
 def main():
-	rospy.init_node('test') #creacion y registro del nodo!
+	rospy.init_node('clase3_nonlinear') #creacion y registro del nodo!
 
 	obj = Template('args') # Crea un objeto del tipo Template, cuya definicion se encuentra arriba
 

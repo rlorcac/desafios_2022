@@ -37,7 +37,7 @@ class Template(object):
 		print(allTheThings(B, linmap([-1,1], [0,1], controls)))
 
 def main():
-	rospy.init_node('test') #creacion y registro del nodo!
+	rospy.init_node('clase2') #creacion y registro del nodo!
 
 	obj = Template('args') # Crea un objeto del tipo Template, cuya definicion se encuentra arriba
 
