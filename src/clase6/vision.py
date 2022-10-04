@@ -14,13 +14,7 @@ class Template(object):
 		self.args = args
 		self.sub = rospy.Subscriber("/duckiebot/camera_node/image/raw", Image, self.procesar_img)
 		self.pubImg = rospy.Publisher("/duckiebot/detecciones", Image, queue_size = 10)
-		self.pubPos = rospy.Publisher("/duckiebot/posicionPato", Point, queue_size=10)
-	
-        def publicar(self):
-		pass
-
-	def callback(self,msg):
-		pass
+		self.pubPos = rospy.Publisher("/duckiebot/posicionPato", Point, queue_size = 10)
 
 	def procesar_img(self, img):
 		bridge = CvBridge()
