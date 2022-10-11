@@ -12,10 +12,10 @@ import numpy as np # importar libreria numpy
 class Template(object):
 	def __init__(self, path):
 		super(Template, self).__init__()
-		self.path = "/home/duckiebot/duckietown/catkin_ws/src/desafios_2022/src/cascade3_LBP_.xml"
+		self.path = path
 		self.sub = rospy.Subscriber("/duckiebot/camera_node/image/rect", Image, self.procesar_img)
 		self.pub = rospy.Publisher("/duckiebot/camera_node/image/patos_cv", Image, queue_size = 10)
-
+		self.detector =  cv2.CascadeClassifier(self.path)
 	def publicar(self):
 		pass
 
@@ -41,8 +41,7 @@ class Template(object):
 def main():
 	rospy.init_node('clase7') #creacion y registro del nodo!
 	
-	detector = cv2.CascadeClassifier("/home/duckiebot/duckietown/catkin_ws/src/desafios_2022/src/cascade3_LBP_.xml")
-	obj = Template('/home/duckiebot/duckietown/catkin_ws/src/desafios_2022/src/cascade3_LBP_.xml') # Crea un objeto del tipo Template, cuya definicion se encuentra arriba
+	obj = Template('/home/duckiebot/duckietown/catkin_ws/src/desafios_2022/src/cascade3_LBP.xml') # Crea un objeto del tipo Template, cuya definicion se encuentra arriba
 
 	#objeto.publicar() #llama al metodo publicar del objeto obj de tipo Template
 
